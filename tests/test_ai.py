@@ -40,6 +40,13 @@ def test_validator_rejects_invented_evidence():
     with pytest.raises(schemas.AIValidationError):
         schemas.validate_result(_finding(evidence="I would phone the CEO at midnight"), ["Communication"], TEXT)
 
+def test_validator_rejects_too_short_evidence():
+    with pytest.raises(schemas.AIValidationError):
+        schemas.validate_result(
+            _finding(evidence="today"),
+            ["Communication"],
+            TEXT,
+        )
 
 def test_validator_rejects_bad_confidence_unknown_competency_and_junk():
     with pytest.raises(schemas.AIValidationError):

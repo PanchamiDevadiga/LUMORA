@@ -1,7 +1,11 @@
+
 """These tests do not need MySQL."""
+
+import logging
+
 import pytest
 
-from app import create_app
+from app import RedactResetTokens, create_app
 from app.config import Config, TestConfig
 
 
@@ -13,6 +17,7 @@ def client():
 def test_health_works_even_without_database(client):
     resp = client.get("/health")
     assert resp.status_code == 200
+
     data = resp.get_json()
     assert data["app"] == "LUMORA"
     assert data["ai_mode"] == "mock"
@@ -43,8 +48,26 @@ def test_bad_auth_mode_is_refused():
     class BadMode(TestConfig):
         AUTH_MODE = "anything"
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RuntimeError, match="AUTH_MODE"):
         create_app(BadMode)
+
+
+def test_bad_ai_mode_is_refused():
+    class BadAIMode(TestConfig):
+        AI_MODE = "anything"
+
+    with pytest.raises(RuntimeError, match="AI_MODE"):
+        create_app(BadAIMode)
+
+
+def test_live_ai_requires_credentials():
+    class LiveWithoutCredentials(TestConfig):
+        AI_MODE = "live"
+        AI_API_KEY = ""
+        AI_MODEL = ""
+
+    with pytest.raises(RuntimeError, match="AI_API_KEY or AI_MODEL"):
+        create_app(LiveWithoutCredentials)
 
 
 def test_session_cookie_is_httponly():
@@ -52,10 +75,17 @@ def test_session_cookie_is_httponly():
 
 
 def test_reset_tokens_are_hidden_in_logs():
-    import logging
-    from app import RedactResetTokens
-    record = logging.LogRecord("werkzeug", logging.INFO, "x", 1,
-                               '"GET /reset-password/abc123_-XYZ HTTP/1.1" 200 -', (), None)
+    record = logging.LogRecord(
+        "werkzeug",
+        logging.INFO,
+        "x",
+        1,
+        '"GET /reset-password/abc123_-XYZ HTTP/1.1" 200 -',
+        (),
+        None,
+    )
+
     RedactResetTokens().filter(record)
+
     assert "abc123" not in record.getMessage()
     assert "/reset-password/<hidden>" in record.getMessage()

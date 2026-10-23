@@ -41,10 +41,11 @@ class Config:
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
     GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "")
 
-    # AI: "live" only when both key and model are set, else "mock"
-    AI_API_KEY = os.getenv("AI_API_KEY", "")
-    AI_MODEL = os.getenv("AI_MODEL", "")
-    AI_MODE = "live" if (AI_API_KEY and AI_MODEL) else "mock"
+
+    # AI mode: explicitly choose "mock" or "live"
+    AI_API_KEY = os.getenv("AI_API_KEY", "").strip()
+    AI_MODEL = os.getenv("AI_MODEL", "").strip()
+    AI_MODE = os.getenv("AI_MODE", "mock").strip().lower()
     AI_TIMEOUT_SECONDS = _int("AI_TIMEOUT_SECONDS", 30)
     AI_MAX_RETRIES = _int("AI_MAX_RETRIES", 2)
 
