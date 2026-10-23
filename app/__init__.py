@@ -53,8 +53,9 @@ def create_app(config_class=Config):
     app.register_blueprint(employee_bp)
     app.register_blueprint(hr_bp)
     app.register_blueprint(assessments_bp)
+
     from app.ui import init_ui
-    init_ui(app)
+    init_ui(app)  # sidebar navigation + friendly "coming soon" pages
 
     @app.after_request
     def security_headers(resp):

@@ -1,0 +1,72 @@
+{% extends "employee/layout.html" %}
+{% from "employee/_parts.html" import confidence_badge, mode_badge %}
+{% block page_title %}Insights: {{ asm.title }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <p class="eyebrow"><a href="{{ url_for('employee.insights') }}">My Insights</a></p>
+  <h1>Here is what your response demonstrated</h1>
+  <p>{{ asm.title }} · submitted {{ asm.submitted_at|fmt_date }}
+    {% if asm.analysis_status == "completed" %} &nbsp; {{ mode_badge(asm.analysis_mode) }}{% endif %}</p>
+</div>
+
+{% if asm.analysis_status == "completed" %}
+  <div class="panel panel--note small" style="margin-bottom: var(--s5)">
+    <strong>Please read this first.</strong> {{ asm.limitations }}
+  </div>
+
+  <div class="findings">
+    {% for f in findings %}
+    <article class="finding finding--{{ f.status }}">
+      <header class="finding__head">
+        <h2>{{ f.competency }}</h2>
+        {{ confidence_badge(f.confidence, f.status) }}
+      </header>
+      <p class="finding__main">{{ f.finding }}</p>
+
+      {% if f.status == "completed" %}
+      <p class="eyebrow">What this is based on</p>
+      <blockquote class="quote">{{ f.evidence }}</blockquote>
+
+      {% if f.development_area %}
+      <p class="eyebrow">An area to explore</p>
+      <p>{{ f.development_area }}</p>
+      {% endif %}
+      {% if f.recommendation %}
+      <p class="eyebrow">A practical next step</p>
+      <p>{{ f.recommendation }}</p>
+      {% endif %}
+      {% else %}
+      <p class="muted">This is not a low result. It only means this response did not give enough to say anything fair about {{ f.competency }}.</p>
+      {% endif %}
+
+      <footer class="finding__foot">
+        {% if f.review_status in ("open", "under_review") %}
+          <span class="badge badge--ember">Review requested</span>
+        {% else %}
+          <a class="small" href="{{ url_for('employee.review_new', finding=f.id) }}">This does not look right. Ask for a review.</a>
+        {% endif %}
+      </footer>
+    </article>
+    {% endfor %}
+  </div>
+
+  <details class="block" style="margin-top: var(--s6)">
+    <summary>Show my original response</summary>
+    <p class="prewrap quote">{{ asm.response_text }}</p>
+  </details>
+  <p><a class="btn btn--primary" href="{{ url_for('employee.learning') }}">See my learning path</a></p>
+
+{% elif asm.analysis_status == "failed" %}
+  <div class="empty">
+    <h3>Your response is safe, but the analysis did not finish</h3>
+    <p>{{ asm.error_message or "The analysis service was not available." }} Nothing was lost, and nothing was guessed.</p>
+    <form method="post" action="{{ url_for('employee.analysis_retry', assessment_id=asm.assessment_id) }}" data-loading>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn--primary" type="submit">Try the analysis again</button>
+    </form>
+  </div>
+{% else %}
+  <div class="empty"><h3>Your analysis is on its way</h3><p>Refresh this page in a moment.</p></div>
+{% endif %}
+{% endblock %}

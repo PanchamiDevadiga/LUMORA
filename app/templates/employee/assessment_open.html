@@ -1,0 +1,59 @@
+{% extends "employee/layout.html" %}
+{% from "employee/_parts.html" import status_badge, due_badge %}
+{% block page_title %}{{ a.title }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <p class="eyebrow"><a href="{{ url_for('employee.assessments') }}">My Assessments</a></p>
+  <h1>{{ a.title }}</h1>
+  <p>{{ status_badge(a.status) }} &nbsp; {{ due_badge(a.due) }}{% if a.is_demo %} &nbsp; <span class="badge badge--demo">Sample scenario</span>{% endif %}</p>
+</div>
+
+<div class="grid-sidebar">
+  <div>
+    <section class="block">
+      <h2>The situation</h2>
+      <p class="prewrap">{{ a.scenario_text }}</p>
+      <h3>What to do</h3>
+      <p class="prewrap">{{ a.instructions }}</p>
+    </section>
+
+    {% if allowed %}
+    <section class="block">
+      <h2>{{ "Your new response" if last else "Your response" }}</h2>
+      <form method="post" action="{{ url_for('employee.assessment_submit', recipient_id=a.recipient_id) }}" data-loading>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field">
+          <label for="response_text">Describe what you would do, and why</label>
+          <textarea class="input" id="response_text" name="response_text" rows="10" minlength="{{ min_len }}" maxlength="{{ max_len }}" required aria-describedby="rt-hint">{{ text }}</textarea>
+          <span class="field__hint" id="rt-hint">At least {{ min_len }} characters. Plain, honest answers are best. Length and polish are not scored.</span>
+        </div>
+        <button type="submit" class="btn btn--primary">Submit response</button>
+        <p class="small muted" style="margin-top: var(--s3)">Once submitted, your original response is kept exactly as written.</p>
+      </form>
+    </section>
+    {% elif last %}
+    <section class="block">
+      <h2>Your submitted response</h2>
+      <p class="small muted">Submitted {{ last.submitted_at|fmt_date }} · attempt {{ last.attempt_no }}</p>
+      <p class="prewrap quote">{{ last.response_text }}</p>
+      {% if last.assessment_id %}
+      <a class="btn btn--primary" href="{{ url_for('employee.insight_detail', assessment_id=last.assessment_id) }}">See what it demonstrated</a>
+      {% endif %}
+    </section>
+    {% endif %}
+  </div>
+
+  <aside>
+    <section class="block">
+      <h2>What this looks at</h2>
+      <ul class="plain-list">
+        {% for c in competencies %}
+        <li><strong>{{ c.name }}</strong><br><span class="small muted">{{ c.description }}</span></li>
+        {% endfor %}
+      </ul>
+      <p class="small muted">LUMORA looks at what your answer shows. It does not judge you as a person. If a finding seems wrong, you can ask for a review.</p>
+    </section>
+  </aside>
+</div>
+{% endblock %}

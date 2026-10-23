@@ -14,8 +14,10 @@ EMP2_EMAIL = "emp2@test.example"
 HR_EMAIL = "hr@test.example"
 OFF_EMAIL = "gone@test.example"
 
-TABLES = ["login_attempts", "password_reset_tokens", "audit_logs", "account_status_history",
-          "hr_role_history", "team_memberships", "teams", "users", "companies"]
+TABLES = ["review_requests", "learning_progress", "recommendations", "competency_findings", "assessments",
+          "responses", "assignment_recipients", "assignments", "training_activities", "scenario_competencies",
+          "scenarios", "competencies", "login_attempts", "password_reset_tokens", "audit_logs",
+          "account_status_history", "hr_role_history", "team_memberships", "teams", "users", "companies"]
 
 
 @pytest.fixture(scope="session")

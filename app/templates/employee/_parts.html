@@ -1,0 +1,20 @@
+{#- Small shared pieces for employee pages. -#}
+{% macro status_badge(status) -%}
+  {%- if status == "assigned" -%}<span class="badge badge--indigo">To do</span>
+  {%- elif status == "submitted" -%}<span class="badge badge--ember">Analysis pending</span>
+  {%- else -%}<span class="badge badge--teal">Completed</span>{%- endif -%}
+{%- endmacro %}
+
+{% macro due_badge(due) -%}
+  <span class="due due--{{ due.state }}">{{ due.label }}</span>
+{%- endmacro %}
+
+{% macro confidence_badge(confidence, status) -%}
+  {%- if status == "insufficient_evidence" -%}<span class="badge">Not enough evidence</span>
+  {%- else -%}<span class="badge badge--{{ 'teal' if confidence == 'high' else ('indigo' if confidence == 'moderate' else '') }}">{{ confidence|capitalize }} confidence</span>{%- endif -%}
+{%- endmacro %}
+
+{% macro mode_badge(mode) -%}
+  {%- if mode == "mock" -%}<span class="badge badge--demo" title="Made by LUMORA's built-in demo rules, not by an AI model">Demonstration analysis</span>
+  {%- else -%}<span class="badge badge--indigo">AI-assisted analysis</span>{%- endif -%}
+{%- endmacro %}

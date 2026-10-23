@@ -1,0 +1,31 @@
+{% extends "employee/layout.html" %}
+{% block page_title %}Review Requests{% endblock %}
+
+{% block content %}
+<div class="page-head page-head__row">
+  <div><h1>Review Requests</h1>
+  <p>If a finding seems inaccurate or unsupported, you can ask a person to look at it.</p></div>
+  <a class="btn btn--primary" href="{{ url_for('employee.review_new') }}">New review request</a>
+</div>
+
+{% if items %}
+<ul class="rows rows--cards">
+  {% for r in items %}
+  <li class="row row--stack">
+    <div class="finding__head">
+      <strong>{{ r.competency }} <span class="muted">in “{{ r.title }}”</span></strong>
+      {% if r.status == "resolved" %}<span class="badge badge--teal">Resolved</span>
+      {% elif r.status == "declined" %}<span class="badge">Closed without change</span>
+      {% elif r.status == "under_review" %}<span class="badge badge--indigo">Being reviewed</span>
+      {% else %}<span class="badge badge--ember">Waiting for review</span>{% endif %}
+    </div>
+    <p class="small muted">Sent {{ r.created_at|fmt_date }}</p>
+    <p class="prewrap">{{ r.concern }}</p>
+    {% if r.outcome %}<div class="panel"><p class="eyebrow">Outcome</p><p class="prewrap" style="margin:0">{{ r.outcome }}</p></div>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="empty"><h3>No review requests</h3><p>You can raise one from any finding on your insights page.</p></div>
+{% endif %}
+{% endblock %}

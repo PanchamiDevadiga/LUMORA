@@ -1,3 +1,4 @@
+
 """MySQL connection helpers. Every query must use %s placeholders."""
 import mysql.connector
 from flask import current_app, g
@@ -54,7 +55,7 @@ def query_all(sql, params=()):
 
 
 def query_one(sql, params=()):
-    cur = get_db().cursor(dictionary=True)
+    cur = get_db().cursor(dictionary=True, buffered=True)
     try:
         cur.execute(sql, params)
         return cur.fetchone()

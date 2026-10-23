@@ -1,0 +1,85 @@
+{% extends "employee/layout.html" %}
+{% from "_macros.html" import icon %}
+{% from "employee/_parts.html" import due_badge, confidence_badge %}
+{% block page_title %}Overview{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <p class="eyebrow">Your next opportunity to grow</p>
+  <h1>Welcome back, {{ first_name }}</h1>
+  <p>Here is where you are, and what could help next.</p>
+</div>
+
+<div class="stat-strip" style="margin-bottom: var(--s6)">
+  <div class="stat"><div class="stat__value">{{ counts.total }}</div><div class="stat__label">Assigned to you</div></div>
+  <div class="stat"><div class="stat__value">{{ counts.pending }}</div><div class="stat__label">Waiting for your response</div></div>
+  <div class="stat"><div class="stat__value">{{ counts.done }}</div><div class="stat__label">Completed</div></div>
+  <div class="stat"><div class="stat__value">{{ learning_counts.done }} / {{ learning_counts.total }}</div><div class="stat__label">Learning activities done</div></div>
+</div>
+
+<div class="grid-sidebar">
+  <div>
+    <section class="block">
+      <h2>Up next</h2>
+      {% if upcoming %}
+      <ul class="rows">
+        {% for a in upcoming %}
+        <li class="row">
+          <div><a class="row__title" href="{{ url_for('employee.assessment_open', recipient_id=a.recipient_id) }}">{{ a.title }}</a>
+            <div class="small muted">Workplace scenario</div></div>
+          {{ due_badge(a.due) }}
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="empty"><h3>You are all caught up</h3><p>Nothing is waiting for you right now. New scenarios will appear here when HR assigns them.</p></div>
+      {% endif %}
+    </section>
+
+    <section class="block">
+      <h2>Recent insights</h2>
+      {% if recent %}
+      <ul class="rows">
+        {% for r in recent %}
+        <li class="row">
+          <div><a class="row__title" href="{{ url_for('employee.insight_detail', assessment_id=r.assessment_id) }}">{{ r.title }}</a>
+            <div class="small muted">Submitted {{ r.submitted_at|fmt_date }}</div></div>
+          <a class="small" href="{{ url_for('employee.insight_detail', assessment_id=r.assessment_id) }}">Read insights</a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="empty"><h3>No insights yet</h3><p>Once you complete a scenario, you will see what your response demonstrated here.</p></div>
+      {% endif %}
+    </section>
+  </div>
+
+  <aside>
+    <section class="block">
+      <h2>Suggested learning</h2>
+      {% if next_learning %}
+      <ul class="rows">
+        {% for l in next_learning %}
+        <li class="row row--stack">
+          <span class="row__title">{{ l.title }}</span>
+          <span class="small muted">{{ l.competency }}{% if l.duration_minutes %} · {{ l.duration_minutes }} min{% endif %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      <p><a class="btn btn--secondary" href="{{ url_for('employee.learning') }}">Open my learning path</a></p>
+      {% else %}
+      <p class="muted">Learning suggestions appear after your first analysed response.</p>
+      {% endif %}
+    </section>
+    {% if learning_counts.total %}
+    <section class="block">
+      <h2>Learning progress</h2>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="{{ learning_counts.total }}" aria-valuenow="{{ learning_counts.done }}">
+        <div class="progress__bar" style="width: {{ (learning_counts.done * 100 / learning_counts.total)|round|int }}%"></div>
+      </div>
+      <p class="small muted" style="margin-top: var(--s2)">{{ learning_counts.done }} of {{ learning_counts.total }} activities completed</p>
+    </section>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

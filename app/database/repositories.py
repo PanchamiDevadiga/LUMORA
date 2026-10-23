@@ -7,7 +7,9 @@ from app.database.connection import execute, get_db, query_one
 
 USER_COLUMNS = (
     "id, company_id, employee_id, full_name, email, role, status, "
-    "password_hash, session_version"
+    "password_hash, session_version, "
+    "(SELECT t.name FROM team_memberships tm JOIN teams t ON t.id = tm.team_id "
+    " WHERE tm.user_id = users.id ORDER BY t.name LIMIT 1) AS team"
 )
 
 
@@ -163,3 +165,11 @@ def consume_reset_token_and_set_password(token_id, user_id, password_hash):
         raise
     finally:
         cur.close()
+
+
+def update_password(user_id, password_hash):
+    """Change a password and sign the user out everywhere else (session_version + 1)."""
+    execute(
+        "UPDATE users SET password_hash = %s, session_version = session_version + 1 WHERE id = %s",
+        (password_hash, user_id),
+    )

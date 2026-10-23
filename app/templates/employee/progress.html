@@ -1,0 +1,49 @@
+{% extends "employee/layout.html" %}
+{% from "employee/_parts.html" import mode_badge %}
+{% block page_title %}My Progress{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>My Progress</h1>
+  <p>Your learning, and your assessment history over time.</p>
+</div>
+
+<section class="block">
+  <h2>Learning completion</h2>
+  {% if learning_counts.total %}
+  <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="{{ learning_counts.total }}" aria-valuenow="{{ learning_counts.done }}">
+    <div class="progress__bar" style="width: {{ (learning_counts.done * 100 / learning_counts.total)|round|int }}%"></div>
+  </div>
+  <p class="small muted" style="margin-top: var(--s2)">{{ learning_counts.done }} of {{ learning_counts.total }} activities completed.</p>
+  {% else %}<p class="muted">No learning activities yet.</p>{% endif %}
+</section>
+
+<section class="block">
+  <h2>Assessment history</h2>
+  {% if history %}
+  <ol class="timeline">
+    {% for h in history %}
+    <li>
+      <span class="timeline__date">{{ h.submitted_at|fmt_date }}</span>
+      <a class="row__title" href="{{ url_for('employee.insight_detail', assessment_id=h.assessment_id) }}">{{ h.title }}</a>
+      <span class="small muted"> · attempt {{ h.attempt_no }}</span>
+      {% if h.analysis_status == "completed" %} {{ mode_badge(h.analysis_mode) }}{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}<p class="muted">Your history will build up as you complete scenarios.</p>{% endif %}
+</section>
+
+<section class="block">
+  <h2>Changes between repeat attempts</h2>
+  {% if comparisons %}
+    <p class="small muted">Only the same scenario, assessed against the same rubric, is compared. These are observations from two analyses. They are not proof that anything improved.</p>
+    {% for c in comparisons %}
+    <h3>{{ c.title }} <span class="small muted">· {{ c.attempts }} attempts, {{ c.first|fmt_date }} to {{ c.last|fmt_date }}</span></h3>
+    <ul class="plain-list">{% for r in c.rows %}<li><strong>{{ r.competency }}.</strong> {{ r.note }}</li>{% endfor %}</ul>
+    {% endfor %}
+  {% else %}
+    <p class="muted">There is nothing fair to compare yet. A comparison needs two attempts at the same scenario, and HR has to allow a reassessment. Until then, LUMORA does not guess at change.</p>
+  {% endif %}
+</section>
+{% endblock %}

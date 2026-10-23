@@ -1,10 +1,9 @@
-{% extends "base.html" %}
+{% extends "layouts/plain.html" %}
 {% block title %}{{ title }} · LUMORA{% endblock %}
-{% block body %}
-<section class="card narrow">
-  <p class="label">Error {{ code }}</p>
-  <h1>{{ title }}</h1>
-  <p>{{ message }}</p>
-  <p><a href="{{ url_for('auth.home') }}">Go to the start page</a></p>
-</section>
+
+{% block content %}
+<p class="small muted">Error {{ code }}</p>
+<h1>{{ title }}</h1>
+<p class="muted">{{ message }}</p>
+<p><a class="btn btn--primary" href="{{ url_for('auth.home') }}">Go to the start page</a></p>
 {% endblock %}

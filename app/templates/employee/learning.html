@@ -1,0 +1,49 @@
+{% extends "employee/layout.html" %}
+{% block page_title %}Learning Path{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Learning Path</h1>
+  <p>Small, practical activities linked to the areas your responses suggested exploring.</p>
+</div>
+
+{% macro activity(l) %}
+<article class="activity">
+  <header class="finding__head">
+    <h3>{{ l.title }}</h3>
+    <span class="badge badge--indigo">{{ l.competency }}</span>
+  </header>
+  <p>{{ l.description }}</p>
+  <dl class="facts">
+    <div><dt>Why it is here</dt><dd>{{ l.reason }} <span class="muted">(from “{{ l.scenario_title }}”)</span></dd></div>
+    <div><dt>Learning objective</dt><dd>{{ l.learning_objective }}</dd></div>
+    <div><dt>Format</dt><dd>{{ l.resource_type|capitalize }}{% if l.duration_minutes %} · about {{ l.duration_minutes }} minutes{% endif %}
+      {% if l.is_demo_resource %}<span class="badge badge--demo">Demonstration resource</span>{% endif %}
+      {% if l.resource_url %} · <a href="{{ l.resource_url }}" rel="noopener noreferrer" target="_blank">Open resource</a>{% endif %}</dd></div>
+  </dl>
+  {% if l.status == "completed" %}
+    <p><span class="badge badge--teal">Completed {{ l.completed_at|fmt_date }}</span></p>
+  {% else %}
+  <div class="actions">
+    {% if l.status == "not_started" %}
+    <form method="post" action="{{ url_for('employee.learning_update', reco_id=l.reco_id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="in_progress">
+      <button class="btn btn--secondary" type="submit">Start</button></form>
+    {% else %}<span class="badge badge--ember">In progress</span>{% endif %}
+    <form method="post" action="{{ url_for('employee.learning_update', reco_id=l.reco_id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="completed">
+      <button class="btn btn--primary" type="submit">Mark as completed</button></form>
+  </div>
+  {% endif %}
+</article>
+{% endmacro %}
+
+{% if items %}
+  {% if todo %}<h2>To explore</h2><div class="stack">{% for l in todo %}{{ activity(l) }}{% endfor %}</div>{% endif %}
+  {% if done %}<h2 style="margin-top: var(--s6)">Completed</h2><div class="stack">{% for l in done %}{{ activity(l) }}{% endfor %}</div>{% endif %}
+{% else %}
+<div class="empty"><h3>Your learning path starts after your first analysed response</h3>
+  <p>When a response suggests an area to explore, matching activities appear here. If your responses already show what they were asked to, there may be nothing to add, and that is fine.</p>
+  <a class="btn btn--secondary" href="{{ url_for('employee.assessments') }}">Go to My Assessments</a></div>
+{% endif %}
+{% endblock %}

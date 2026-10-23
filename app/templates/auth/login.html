@@ -61,6 +61,7 @@
   {# Right: the form #}
   <section class="auth__panel">
     <main id="main" class="auth__card" tabindex="-1">
+      {% if auth_mode == "demo" %}<span class="badge badge--demo" style="margin-bottom: var(--s3)">DEMO MODE</span>{% endif %}
       <h2>Welcome back</h2>
       <p class="muted">Sign in with your company email to continue.</p>
 
@@ -108,7 +109,7 @@
 
       {% if auth_mode == "demo" %}
         <p class="mode-note panel panel--note" style="padding: var(--s3) var(--s4); margin-top: var(--s5)">
-          <strong>DEMO MODE.</strong> Sign in with one of the fictional demo accounts listed in the README.
+          <strong>Demo mode.</strong> Sign in with one of the fictional demo accounts listed in the README.
           This is local sign-in, not Google or company single sign-on.
         </p>
       {% else %}

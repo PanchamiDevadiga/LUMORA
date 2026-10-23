@@ -1,0 +1,33 @@
+{% extends "employee/layout.html" %}
+{% block page_title %}New review request{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <p class="eyebrow"><a href="{{ url_for('employee.reviews') }}">Review Requests</a></p>
+  <h1>Ask for a review</h1>
+  <p>Tell us what looks wrong or unsupported. A person in HR will read it.</p>
+</div>
+
+{% if options %}
+<form class="block narrow-form" method="post" action="{{ url_for('employee.review_new') }}" data-loading>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="field">
+    <label for="finding_id">Which finding?</label>
+    <select class="input" id="finding_id" name="finding_id" required>
+      <option value="">Choose a finding</option>
+      {% for o in options %}
+      <option value="{{ o.id }}" {% if o.id == selected %}selected{% endif %}>{{ o.competency }} · {{ o.title }} · {{ o.submitted_at|fmt_date }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="concern">What is your concern?</label>
+    <textarea class="input" id="concern" name="concern" rows="6" maxlength="{{ max_len }}" required>{{ concern }}</textarea>
+    <span class="field__hint">For example: the quoted sentence does not show what the finding says, or an important part of my answer was missed.</span>
+  </div>
+  <button class="btn btn--primary" type="submit">Send review request</button>
+</form>
+{% else %}
+<div class="empty"><h3>No findings to review yet</h3><p>Once a response has been analysed, you can raise a concern about any of its findings.</p></div>
+{% endif %}
+{% endblock %}

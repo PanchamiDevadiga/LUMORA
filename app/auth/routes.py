@@ -11,7 +11,7 @@ LOGIN_FAILED = "We could not sign you in. Please check your email and password."
 
 
 def _home_for(user):
-    return url_for("hr.index") if user["role"] == "hr" else url_for("employee.index")
+    return url_for("hr.overview") if user["role"] == "hr" else url_for("employee.overview")
 
 
 @bp.before_app_request
@@ -54,7 +54,7 @@ def login():
     if request.method == "POST" and current_app.config["AUTH_MODE"] == "demo":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
-        remember = request.form.get("remember") == "on"
+        remember = request.form.get("remember") in ("on", "1")
         ip = request.remote_addr
 
         if services.is_login_blocked(email, ip):

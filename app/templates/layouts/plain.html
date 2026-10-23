@@ -1,0 +1,18 @@
+{#- Simple centred page for forgot-password, reset-password and error screens. -#}
+{% extends "base.html" %}
+{% from "_macros.html" import logo, flashes %}
+
+{% block body_class %}plain-page{% endblock %}
+
+{% block body %}
+<div class="plain">
+  <header class="plain__brand">
+    {{ logo(variant="dark", href=safe_url("auth.login", "#")) }}
+  </header>
+  <main id="main" class="plain__card" tabindex="-1">
+    {{ flashes() }}
+    {% block content %}{% endblock %}
+  </main>
+  <p class="plain__foot">Illuminate Potential. Inspire Growth.</p>
+</div>
+{% endblock %}

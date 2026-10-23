@@ -1,0 +1,37 @@
+{% extends "employee/layout.html" %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>My Profile</h1>
+  <p>This is the information LUMORA holds about your account.</p>
+</div>
+
+<div class="grid-2">
+  <section class="block">
+    <h2>Account details</h2>
+    <dl class="facts">
+      <div><dt>Name</dt><dd>{{ current_user.full_name }}</dd></div>
+      <div><dt>Employee ID</dt><dd>{{ current_user.employee_id }}</dd></div>
+      <div><dt>Work email</dt><dd>{{ current_user.email }}</dd></div>
+      <div><dt>Team</dt><dd>{{ current_user.team or "Not set" }}</dd></div>
+    </dl>
+    <p class="small muted">These details come from your organisation's records, so they can only be changed there. In a real deployment they are synchronised from the company directory.</p>
+  </section>
+
+  <section class="block">
+    <h2>Change my password</h2>
+    {% if auth_mode == "demo" %}
+    <form method="post" action="{{ url_for('employee.change_password') }}" data-loading>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field"><label for="cp">Current password</label><input class="input" id="cp" name="current_password" type="password" autocomplete="current-password" required></div>
+      <div class="field"><label for="np">New password</label><input class="input" id="np" name="new_password" type="password" autocomplete="new-password" required><span class="field__hint">At least 8 characters, with a letter and a number.</span></div>
+      <div class="field"><label for="cf">Type the new password again</label><input class="input" id="cf" name="confirm_password" type="password" autocomplete="new-password" required></div>
+      <button class="btn btn--primary" type="submit">Change password</button>
+    </form>
+    {% else %}
+    <p class="muted">You sign in with Google, so your password is managed by Google, not LUMORA.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

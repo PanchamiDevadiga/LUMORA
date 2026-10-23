@@ -1,0 +1,32 @@
+{% extends "employee/layout.html" %}
+{% from "employee/_parts.html" import mode_badge %}
+{% block page_title %}My Insights{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>My Insights</h1>
+  <p>Here is what each response demonstrated, with the words it is based on.</p>
+</div>
+
+{% if items %}
+<ul class="rows rows--cards">
+  {% for r in items %}
+  <li class="row">
+    <div>
+      <a class="row__title" href="{{ url_for('employee.insight_detail', assessment_id=r.assessment_id) }}">{{ r.title }}</a>
+      <div class="small muted">Submitted {{ r.submitted_at|fmt_date }} · attempt {{ r.attempt_no }}</div>
+    </div>
+    <div class="row__end">
+      {% if r.analysis_status == "completed" %}{{ mode_badge(r.analysis_mode) }}
+      {% elif r.analysis_status == "failed" %}<span class="badge badge--danger">Needs a retry</span>
+      {% else %}<span class="badge badge--ember">In progress</span>{% endif %}
+      <a class="btn btn--secondary" href="{{ url_for('employee.insight_detail', assessment_id=r.assessment_id) }}">Open</a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="empty"><h3>Your insights will appear here</h3><p>Complete a scenario and you will see what your response demonstrated, plus one or two practical next steps.</p>
+  <a class="btn btn--secondary" href="{{ url_for('employee.assessments') }}">Go to My Assessments</a></div>
+{% endif %}
+{% endblock %}

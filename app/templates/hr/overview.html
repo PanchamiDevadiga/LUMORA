@@ -1,0 +1,9 @@
+{% extends "hr/layout.html" %}
+{% block page_title %}Overview{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Welcome, {{ current_user.full_name.split()[0] }}</h1>
+  <p>The HR workspace is built in Phase 5. The navigation is already in place.</p>
+</div>
+{% endblock %}

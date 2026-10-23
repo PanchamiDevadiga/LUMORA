@@ -1,0 +1,31 @@
+{% extends "employee/layout.html" %}
+{% from "employee/_parts.html" import status_badge, due_badge %}
+{% block page_title %}My Assessments{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>My Assessments</h1>
+  <p>Short workplace scenarios. There are no trick questions. Describe what you would genuinely do.</p>
+</div>
+
+{% if items %}
+<div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Scenario</th><th>Status</th><th>Deadline</th><th><span class="sr-only">Action</span></th></tr></thead>
+    <tbody>
+    {% for a in items %}
+      <tr>
+        <td><a class="row__title" href="{{ url_for('employee.assessment_open', recipient_id=a.recipient_id) }}">{{ a.title }}</a>
+            {% if a.is_demo %}<span class="badge badge--demo">Sample scenario</span>{% endif %}</td>
+        <td>{{ status_badge(a.status) }}</td>
+        <td>{{ due_badge(a.due) }}</td>
+        <td style="text-align:right"><a class="btn btn--secondary" href="{{ url_for('employee.assessment_open', recipient_id=a.recipient_id) }}">{{ "Start" if a.status == "assigned" else "View" }}</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty"><h3>Nothing assigned yet</h3><p>When HR assigns you a scenario, it will show up here with its deadline.</p></div>
+{% endif %}
+{% endblock %}
