@@ -1,0 +1,16 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><p><a href="{{ url_for('hr.scenarios') }}">&larr; Scenarios</a></p>
+<h1>{{ s.title }} <span class="hrx-pill">v{{ s.version }} &middot; {{ s.status }}</span></h1>
+<div class="hrx-card"><h2 style="margin-top:0">Scenario</h2><p style="white-space:pre-wrap">{{ s.scenario_text }}</p>
+<h2>Instructions to the employee</h2><p style="white-space:pre-wrap">{{ s.instructions }}</p></div>
+<h2>Competencies and rubrics</h2>
+{% for c in comps %}<div class="hrx-card"><b>{{ c.name }}</b><p class="hrx-muted">{{ c.description }}</p><p style="white-space:pre-wrap">{{ c.rubric }}</p></div>
+{% else %}<p class="hrx-card">No competencies linked yet. A scenario needs at least one before it can be published.</p>{% endfor %}
+<form method="post" action="{{ url_for('hr.scenario_action', scenario_id=s.id) }}" style="display:flex;gap:.5rem;flex-wrap:wrap">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% if s.status=='draft' %}<a class="hrx-btn sec" href="{{ url_for('hr.scenario_edit', scenario_id=s.id) }}">Edit draft</a>
+<button class="hrx-btn" name="action" value="publish">Publish</button>{% endif %}
+{% if s.status=='published' %}<button class="hrx-btn sec" name="action" value="archive">Archive</button>{% endif %}
+{% if s.status!='draft' %}<button class="hrx-btn sec" name="action" value="new_version">Create new version</button>{% endif %}
+</form></div>{% endblock %}

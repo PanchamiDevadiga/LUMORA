@@ -1,0 +1,12 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><h1>Talent &amp; skills explorer</h1>
+<p class="hrx-note">Shows evidence from assessments, listed alphabetically. There are no rankings. "Not yet assessed" means no evidence exists, not low ability.</p>
+<form class="hrx-filter" method="get"><select name="competency" aria-label="Competency">{% for c in comps %}<option value="{{ c.id }}" {{ 'selected' if c.id==cid }}>{{ c.name }}</option>{% endfor %}</select>
+<input type="text" name="q" value="{{ q }}" placeholder="Name or employee ID"><button class="hrx-btn" type="submit">Show</button></form>
+<table class="hrx-table"><tr><th>Employee</th><th>What the evidence shows</th><th>Confidence</th><th>Assessed</th></tr>
+{% for r in rows %}<tr><td><a href="{{ url_for('hr.report_detail', user_id=r.id) }}">{{ r.full_name }}</a></td>
+{% if not r.finding %}<td class="hrx-muted">Not yet assessed</td><td>—</td><td>—</td>
+{% elif r.fstatus=='insufficient_evidence' %}<td class="hrx-muted">Evidence was insufficient to say</td><td>—</td><td>{{ r.completed_at|fmt_dt }}</td>
+{% else %}<td>{{ r.finding }}{% if r.evidence %}<br><span class="hrx-muted"><i>{{ r.evidence }}</i></span>{% endif %}</td><td>{{ r.confidence }}</td>
+<td>{{ r.completed_at|fmt_dt }}{% if r.analysis_mode=='mock' %}<br><span class="hrx-pill">demo output</span>{% endif %}</td>{% endif %}</tr>{% endfor %}</table></div>{% endblock %}

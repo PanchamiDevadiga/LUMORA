@@ -1,0 +1,8 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><h1>Assessment assignments</h1>
+<p><a class="hrx-btn" href="{{ url_for('hr.assignment_new') }}">New assignment</a></p>
+{% if items %}<div class="hrx-wrap"><table class="hrx-table"><tr><th>Scenario</th><th>Deadline</th><th>Completion</th><th></th></tr>
+{% for a in items %}<tr><td>{{ a.title }} v{{ a.version }}</td><td>{{ a.deadline.strftime('%d %b %Y') if a.deadline else 'None' }}</td>
+<td>{{ a.done or 0 }} of {{ a.total }} done</td><td><a href="{{ url_for('hr.assignment_detail', assignment_id=a.id) }}">Details</a></td></tr>{% endfor %}</table></div>
+{% else %}<p class="hrx-card">Nothing assigned yet. Choose "New assignment" to send a published scenario to your team.</p>{% endif %}</div>{% endblock %}

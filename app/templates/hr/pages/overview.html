@@ -1,0 +1,40 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx">
+<h1>Overview</h1>
+<p class="hrx-note">Every number below is read live from the database. The records are fictional demonstration data.</p>
+<div class="hrx-grid">
+  <div class="hrx-stat"><b>{{ active }}</b><span>Active employees</span></div>
+  <div class="hrx-stat"><b>{{ assigned }}</b><span>Assessments assigned</span></div>
+  <div class="hrx-stat"><b>{{ completed }}</b><span>Assessments completed</span></div>
+  <div class="hrx-stat"><b>{{ awaiting }}</b><span>Awaiting completion</span></div>
+  <div class="hrx-stat"><b>{{ learning_done }}</b><span>Learning activities completed</span></div>
+  <div class="hrx-stat"><b>{{ open_reviews }}</b><span>Open review requests</span></div>
+</div>
+<div class="hrx-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+  <div class="hrx-card"><h2 style="margin-top:0">Assessment progress</h2>
+    <canvas id="c-assign" height="170" data-chart='{{ assign_chart|tojson }}' hidden></canvas>
+    <table class="hrx-table" id="t-assign"><tr><th>Status</th><th>Count</th></tr>
+    {% for l in assign_chart.labels %}<tr><td>{{ l }}</td><td>{{ assign_chart.values[loop.index0] }}</td></tr>{% endfor %}</table></div>
+  <div class="hrx-card"><h2 style="margin-top:0">Learning activity status</h2>
+    <canvas id="c-learn" height="170" data-chart='{{ learn_chart|tojson }}' hidden></canvas>
+    <table class="hrx-table" id="t-learn"><tr><th>Status</th><th>Count</th></tr>
+    {% for l in learn_chart.labels %}<tr><td>{{ l }}</td><td>{{ learn_chart.values[loop.index0] }}</td></tr>{% endfor %}</table></div>
+</div>
+<p><a class="hrx-btn" href="{{ url_for('hr.directory') }}">Employee directory</a>
+ <a class="hrx-btn sec" href="{{ url_for('hr.governance') }}">Review requests</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function(){
+  if(!window.Chart){return;}  /* offline or blocked: the tables stay visible */
+  [["c-assign","t-assign","doughnut"],["c-learn","t-learn","bar"]].forEach(function(x){
+    var cv=document.getElementById(x[0]),tb=document.getElementById(x[1]);
+    var d=JSON.parse(cv.getAttribute("data-chart"));
+    cv.hidden=false;tb.hidden=true;
+    new Chart(cv,{type:x[2],data:{labels:d.labels,datasets:[{data:d.values,backgroundColor:["#6366F1","#14B8A6","#0B1F44"]}]},
+      options:{plugins:{legend:{display:x[2]==="doughnut"}},scales:x[2]==="bar"?{y:{beginAtZero:true,ticks:{precision:0}}}:{}}});
+  });
+})();
+</script>
+{% endblock %}

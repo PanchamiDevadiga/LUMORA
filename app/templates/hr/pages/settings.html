@@ -1,0 +1,8 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><h1>Settings</h1>
+<p class="hrx-note">Read-only in this drop. Editing competency definitions, training resources and assessment policies comes next.</p>
+<h2>Competency definitions</h2><table class="hrx-table"><tr><th>Name</th><th>Definition</th><th>Active</th></tr>
+{% for c in comps %}<tr><td>{{ c.name }}</td><td>{{ c.description }}</td><td>{{ 'Yes' if c.is_active else 'No' }}</td></tr>{% endfor %}</table>
+<h2>Training resources</h2><table class="hrx-table"><tr><th>Activity</th><th>Competency</th><th>Type</th><th>Minutes</th><th></th></tr>
+{% for a in acts %}<tr><td>{{ a.title }}</td><td>{{ a.competency }}</td><td>{{ a.resource_type }}</td><td>{{ a.duration_minutes or '—' }}</td><td>{% if a.is_demo_resource %}<span class="hrx-pill">demo resource</span>{% endif %}</td></tr>{% endfor %}</table></div>{% endblock %}

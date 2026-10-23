@@ -1,0 +1,5 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><p><a href="{{ url_for('hr.assignments') }}">&larr; Assignments</a></p><h1>{{ a.title }} v{{ a.version }}</h1>
+<table class="hrx-table"><tr><th>Employee</th><th>ID</th><th>Account</th><th>Progress</th></tr>
+{% for r in rec %}<tr><td>{{ r.full_name }}</td><td>{{ r.employee_id }}</td><td>{{ r.account_status }}</td><td>{{ r.status }}</td></tr>{% endfor %}</table></div>{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx">
+<p><a href="{{ url_for('hr.directory') }}">&larr; Directory</a></p>
+<h1>{{ p.full_name }}</h1>
+<div class="hrx-card">
+<p><b>Employee ID:</b> {{ p.employee_id }} &nbsp; <b>Email:</b> {{ p.email }}</p>
+<p><b>Teams:</b> {% for t in teams %}{{ t.name }}{{ ', ' if not loop.last }}{% else %}None{% endfor %}</p>
+<p><b>Status:</b> <span class="hrx-pill {{ 'ok' if p.status=='active' else 'off' }}">{{ p.status }}</span>
+ &nbsp; <b>Assessments completed:</b> {{ counts.done or 0 }} of {{ counts.total or 0 }}</p>
+<p><a href="{{ url_for('hr.report_detail', user_id=p.id) }}">Open development report</a></p>
+</div>
+<h2>Account access</h2>
+<form class="hrx-card" method="post" action="{{ url_for('hr.directory_status', user_id=p.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="action" value="{{ 'deactivate' if p.status=='active' else 'reactivate' }}">
+  <p class="hrx-muted">{% if p.status=='active' %}Deactivating blocks sign-in and signs the person out of every device. Their assessments and history are kept.{% else %}Reactivating lets this person sign in again.{% endif %}</p>
+  <p><input type="text" name="reason" maxlength="255" placeholder="Reason (optional)" style="width:100%"></p>
+  <p><label><input type="checkbox" name="confirm" value="1" required> I confirm I want to {{ 'deactivate' if p.status=='active' else 'reactivate' }} this account.</label></p>
+  <button class="hrx-btn {{ 'danger' if p.status=='active' }}" type="submit">{{ 'Deactivate account' if p.status=='active' else 'Reactivate account' }}</button>
+</form>
+<h2>Account status history</h2>
+{% if history %}<table class="hrx-table"><tr><th>When</th><th>Change</th><th>By</th><th>Reason</th></tr>
+{% for h in history %}<tr><td>{{ h.changed_at|fmt_dt }}</td><td>{{ h.old_status or '—' }} &rarr; {{ h.new_status }}</td><td>{{ h.changed_by_name or 'System' }}</td><td>{{ h.reason or '' }}</td></tr>{% endfor %}</table>
+{% else %}<p class="hrx-muted">No status changes recorded yet.</p>{% endif %}
+</div>{% endblock %}

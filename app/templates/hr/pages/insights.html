@@ -1,0 +1,14 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><h1>Organisational insights</h1>
+<p class="hrx-note">Aggregates only, built from <b>fictional demonstration data</b>. Groups with fewer than {{ min_group }} people are hidden to protect privacy. These patterns describe the assessments taken so far, not all employees.</p>
+<h2>Competency evidence</h2>
+<table class="hrx-table"><tr><th>Competency</th><th>People assessed</th><th>High</th><th>Moderate</th><th>Low</th><th>Insufficient</th></tr>
+{% for c in comp %}{% if c.people >= min_group %}<tr><td>{{ c.name }}</td><td>{{ c.people }}</td><td>{{ c.hi or 0 }}</td><td>{{ c.mo or 0 }}</td><td>{{ c.lo or 0 }}</td><td>{{ c.insufficient or 0 }}</td></tr>
+{% else %}<tr><td>{{ c.name }}</td><td colspan="5" class="hrx-muted">Hidden: fewer than {{ min_group }} people assessed</td></tr>{% endif %}
+{% else %}<tr><td colspan="6" class="hrx-muted">No analysed assessments yet.</td></tr>{% endfor %}</table>
+<h2>Possible training priorities</h2>
+<table class="hrx-table"><tr><th>Activity</th><th>People it was recommended to</th></tr>
+{% for t in training %}{% if t.people >= min_group %}<tr><td>{{ t.title }}</td><td>{{ t.people }}</td></tr>{% endif %}
+{% else %}<tr><td colspan="2" class="hrx-muted">No recommendations yet.</td></tr>{% endfor %}</table>
+<p class="hrx-muted">Activities recommended to fewer than {{ min_group }} people are not listed.</p></div>{% endblock %}

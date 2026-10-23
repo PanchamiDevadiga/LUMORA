@@ -1,0 +1,7 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><h1>Individual development reports</h1>
+<p class="hrx-note">Reports describe what a response demonstrated. They support a conversation about development and are not a verdict on a person.</p>
+<table class="hrx-table"><tr><th>Employee</th><th>ID</th><th>Analysed responses</th><th></th></tr>
+{% for p in people %}<tr><td>{{ p.full_name }} {% if p.status!='active' %}<span class="hrx-pill off">inactive</span>{% endif %}</td><td>{{ p.employee_id }}</td><td>{{ p.analysed }}</td>
+<td><a href="{{ url_for('hr.report_detail', user_id=p.id) }}">Open report</a></td></tr>{% endfor %}</table></div>{% endblock %}

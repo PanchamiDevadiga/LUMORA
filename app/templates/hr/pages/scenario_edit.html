@@ -1,0 +1,9 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><p><a href="{{ url_for('hr.scenario_preview', scenario_id=s.id) }}">&larr; Preview</a></p><h1>Edit draft</h1>
+<form class="hrx-card" method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<p><label>Title<br><input type="text" name="title" value="{{ s.title }}" maxlength="200" style="width:100%" required></label></p>
+<p><label>Scenario<br><textarea name="scenario_text" required>{{ s.scenario_text }}</textarea></label></p>
+<p><label>Instructions<br><textarea name="instructions" required>{{ s.instructions }}</textarea></label></p>
+<button class="hrx-btn" type="submit">Save draft</button></form></div>{% endblock %}

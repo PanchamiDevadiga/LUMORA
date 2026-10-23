@@ -1,0 +1,11 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><p><a href="{{ url_for('hr.assignments') }}">&larr; Assignments</a></p><h1>New assignment</h1>
+{% if not scenarios %}<p class="hrx-card">There is no published scenario yet. Publish one first.</p>{% else %}
+<form class="hrx-card" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<p><label>Scenario<br><select name="scenario_id" required>{% for s in scenarios %}<option value="{{ s.id }}">{{ s.title }} (v{{ s.version }})</option>{% endfor %}</select></label></p>
+<p><label>Deadline (optional)<br><input type="date" name="deadline"></label></p>
+<p><label><input type="checkbox" name="allow_reassessment" value="1"> Allow a repeat attempt after the first analysis</label></p>
+<h2>Teams</h2><div class="hrx-checks">{% for t in teams %}<label><input type="checkbox" name="team_ids" value="{{ t.id }}"> {{ t.name }}</label>{% endfor %}</div>
+<h2>Individual employees (active only)</h2><div class="hrx-checks">{% for p in people %}<label><input type="checkbox" name="user_ids" value="{{ p.id }}"> {{ p.full_name }} ({{ p.employee_id }})</label>{% endfor %}</div>
+<p><button class="hrx-btn" type="submit">Assign</button></p></form>{% endif %}</div>{% endblock %}

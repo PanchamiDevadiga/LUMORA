@@ -1,0 +1,21 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx">
+<h1>Employee directory</h1>
+<p class="hrx-muted">Employee records come from the identity source. In this demo they are seeded; there is no manual registration.</p>
+<form class="hrx-filter" method="get">
+  <input type="text" name="q" value="{{ q }}" placeholder="Name or employee ID" aria-label="Search">
+  <select name="team" aria-label="Team"><option value="">All teams</option>
+    {% for t in teams %}<option value="{{ t.id }}" {{ 'selected' if team == t.id }}>{{ t.name }}</option>{% endfor %}</select>
+  <select name="status" aria-label="Status"><option value="">Any status</option>
+    <option value="active" {{ 'selected' if status=='active' }}>Active</option>
+    <option value="inactive" {{ 'selected' if status=='inactive' }}>Inactive</option></select>
+  <button class="hrx-btn" type="submit">Filter</button>
+</form>
+{% if people %}<div class="hrx-wrap"><table class="hrx-table">
+<tr><th>Employee ID</th><th>Name</th><th>Email</th><th>Team</th><th>Status</th><th></th></tr>
+{% for p in people %}<tr><td>{{ p.employee_id }}</td><td>{{ p.full_name }}</td><td>{{ p.email }}</td><td>{{ p.teams or '—' }}</td>
+<td><span class="hrx-pill {{ 'ok' if p.status=='active' else 'off' }}">{{ p.status }}</span></td>
+<td><a href="{{ url_for('hr.directory_detail', user_id=p.id) }}">View</a></td></tr>{% endfor %}
+</table></div>{% else %}<p class="hrx-card">No employees match those filters. Try clearing the search.</p>{% endif %}
+</div>{% endblock %}

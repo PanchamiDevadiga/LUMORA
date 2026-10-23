@@ -1,0 +1,21 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><h1>Review &amp; governance</h1>
+<h2>Review requests</h2>
+{% for r in reviews %}<div class="hrx-card"><b>{{ r.full_name }}</b> &middot; {{ r.competency }} <span class="hrx-pill {{ 'warn' if r.status in ('open','under_review') else 'ok' }}">{{ r.status.replace('_',' ') }}</span>
+<p class="hrx-muted">Finding: {{ r.finding }}{% if r.evidence %}<br>Evidence: <i>{{ r.evidence }}</i>{% endif %}</p>
+<p><b>Concern:</b> {{ r.concern }}</p>{% if r.outcome %}<p><b>Outcome:</b> {{ r.outcome }} <span class="hrx-muted">(by {{ r.reviewer or 'HR' }})</span></p>{% endif %}
+<form method="post" action="{{ url_for('hr.review_update', review_id=r.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<textarea name="outcome" placeholder="Outcome the employee will read (needed to resolve or decline)" style="min-height:3.5rem">{{ r.outcome or '' }}</textarea>
+<p><button class="hrx-btn sec" name="status" value="under_review">Mark under review</button>
+<button class="hrx-btn" name="status" value="resolved">Resolve</button>
+<button class="hrx-btn sec" name="status" value="declined">Decline</button></p></form></div>
+{% else %}<p class="hrx-card">No review requests yet. When an employee questions a finding, it will appear here.</p>{% endfor %}
+<h2>Recent audit events</h2><div class="hrx-wrap"><table class="hrx-table"><tr><th>When</th><th>Who</th><th>Action</th><th>Target</th></tr>
+{% for a in audit %}<tr><td>{{ a.created_at|fmt_dt }}</td><td>{{ a.actor or 'System' }}</td><td>{{ a.action }}</td><td>{{ a.target_type or '' }} {{ a.target_id or '' }}</td></tr>{% endfor %}</table></div>
+<h2>Account-status history</h2><table class="hrx-table"><tr><th>When</th><th>Employee</th><th>Change</th><th>By</th><th>Reason</th></tr>
+{% for h in status_hist %}<tr><td>{{ h.changed_at|fmt_dt }}</td><td>{{ h.full_name }}</td><td>{{ h.old_status or '—' }} &rarr; {{ h.new_status }}</td><td>{{ h.by_name or 'System' }}</td><td>{{ h.reason or '' }}</td></tr>
+{% else %}<tr><td colspan="5" class="hrx-muted">No changes yet.</td></tr>{% endfor %}</table>
+<h2>Role-change history</h2><table class="hrx-table"><tr><th>When</th><th>Person</th><th>Change</th><th>By</th><th>Reason</th></tr>
+{% for h in role_hist %}<tr><td>{{ h.changed_at|fmt_dt }}</td><td>{{ h.full_name }}</td><td>{{ h.old_role or '—' }} &rarr; {{ h.new_role }}</td><td>{{ h.by_name or 'System' }}</td><td>{{ h.reason or '' }}</td></tr>
+{% else %}<tr><td colspan="5" class="hrx-muted">No role changes recorded.</td></tr>{% endfor %}</table></div>{% endblock %}

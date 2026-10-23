@@ -1,0 +1,9 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><h1>Scenario management</h1>
+<p class="hrx-note">Published scenarios are never edited. To change one, create a new version; earlier assessments keep the rubric they were assessed with.</p>
+{% if items %}<div class="hrx-wrap"><table class="hrx-table"><tr><th>Title</th><th>Version</th><th>Status</th><th>Competencies</th><th>Assignments</th><th></th></tr>
+{% for s in items %}<tr><td>{{ s.title }} {% if s.is_demo %}<span class="hrx-pill">demo</span>{% endif %}</td><td>v{{ s.version }}</td>
+<td><span class="hrx-pill {{ 'ok' if s.status=='published' else ('warn' if s.status=='draft' else 'off') }}">{{ s.status }}</span></td>
+<td>{{ s.comp_count }}</td><td>{{ s.assign_count }}</td><td><a href="{{ url_for('hr.scenario_preview', scenario_id=s.id) }}">Preview</a></td></tr>{% endfor %}</table></div>
+{% else %}<p class="hrx-card">No scenarios yet.</p>{% endif %}</div>{% endblock %}

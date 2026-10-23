@@ -1,0 +1,20 @@
+{% extends "hr/layout.html" %}
+{% block content %}{% include "hr/pages/_styles.html" %}
+<div class="hrx"><p><a href="{{ url_for('hr.reports') }}">&larr; Reports</a></p><h1>{{ p.full_name }}</h1>
+{% for a in asms %}<div class="hrx-card"><h2 style="margin-top:0">{{ a.scenario }} <span class="hrx-pill">attempt {{ a.attempt_no }}</span></h2>
+<p class="hrx-muted">Submitted {{ a.submitted_at|fmt_dt }} &middot; analysis: {{ a.analysis_status }}
+{% if a.analysis_mode=='mock' %}&middot; <b>Demonstration output, not a live AI result</b>{% endif %}</p>
+{% for f in a.findings %}<div style="border-top:1px solid #EEF2F7;padding:.6rem 0"><b>{{ f.competency }}</b>
+<span class="hrx-pill {{ 'warn' if f.status=='insufficient_evidence' else 'ok' }}">{{ 'Insufficient evidence' if f.status=='insufficient_evidence' else 'confidence: ' ~ f.confidence }}</span>
+<p>{{ f.finding }}</p>{% if f.evidence %}<p class="hrx-muted"><i>Evidence from the response:</i> {{ f.evidence }}</p>{% endif %}
+{% if f.development_area %}<p><i>Development area:</i> {{ f.development_area }}</p>{% endif %}
+{% if f.recommendation %}<p><i>Recommendation:</i> {{ f.recommendation }}</p>{% endif %}</div>
+{% else %}<p class="hrx-muted">No findings yet for this response.</p>{% endfor %}
+{% if a.limitations %}<p class="hrx-note"><b>Limitations:</b> {{ a.limitations }}</p>{% endif %}</div>
+{% else %}<p class="hrx-card">This employee has no assessments yet. "Not yet assessed" does not mean low ability.</p>{% endfor %}
+<h2>Learning progress</h2>
+{% if learning %}<table class="hrx-table"><tr><th>Activity</th><th>Minutes</th><th>Status</th></tr>
+{% for l in learning %}<tr><td>{{ l.title }}</td><td>{{ l.duration_minutes or '—' }}</td><td>{{ (l.status or 'not_started').replace('_',' ') }}</td></tr>{% endfor %}</table>{% else %}<p class="hrx-muted">No learning activities recommended yet.</p>{% endif %}
+<h2>Review requests</h2>
+{% for r in reviews %}<div class="hrx-card"><b>{{ r.competency }}</b> <span class="hrx-pill">{{ r.status.replace('_',' ') }}</span><p>{{ r.concern }}</p>{% if r.outcome %}<p class="hrx-muted">Outcome: {{ r.outcome }}</p>{% endif %}</div>
+{% else %}<p class="hrx-muted">No review requests.</p>{% endfor %}</div>{% endblock %}
