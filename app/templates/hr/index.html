@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Overview · LUMORA{% endblock %}
+{% block content %}
+<section class="card">
+  <p class="label">HR portal</p>
+  <h1>Welcome, {{ current_user.full_name }}</h1>
+  <p>You are signed in as HR. The real pages (directory, assignments, reports) are built in Phase 5.</p>
+</section>
+{% endblock %}

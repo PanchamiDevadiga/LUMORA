@@ -1,0 +1,16 @@
+{#- Friendly placeholder for pages built in a later phase. Disappears per-link as real endpoints are added. -#}
+{% extends "hr/layout.html" if area == "hr" else "employee/layout.html" %}
+{% from "_macros.html" import icon %}
+
+{% block page_title %}{{ label }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>{{ label }}</h1>
+</div>
+<div class="empty">
+  <span class="empty__art" aria-hidden="true" style="color: var(--action)">{{ icon("sprout", 56) }}</span>
+  <h3>This page is still growing</h3>
+  <p>{{ label }} is built in {{ "Phase 5" if area == "hr" else "Phase 4" }} of the LUMORA build. The navigation is already in place, so it will appear here as soon as it's ready.</p>
+</div>
+{% endblock %}

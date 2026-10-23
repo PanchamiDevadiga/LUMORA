@@ -1,0 +1,74 @@
+{#- Demo-mode design preview. Values below are illustrative only, NOT database data. -#}
+{% extends "hr/layout.html" if area == "hr" else "employee/layout.html" %}
+{% from "_macros.html" import icon %}
+
+{% block page_title %}Design preview{% endblock %}
+
+{% block content %}
+{% if area == "employee" %}
+<section class="welcome">
+  <h1>Good to see you, Maya</h1>
+  <p class="muted" style="font-size: var(--fs-lg)">Here is where you are and what's worth doing next.</p>
+</section>
+{% else %}
+<div class="page-head">
+  <h1>People overview</h1>
+  <p>Where development is happening across the organisation.</p>
+</div>
+{% endif %}
+
+<div class="flash flash--info" role="note">
+  {{ icon("info", 18) }}
+  <p>Design preview with illustrative numbers. Real dashboards read from the database in Phase {{ 5 if area == "hr" else 4 }}.</p>
+</div>
+
+<div class="stat-strip section">
+  <div class="stat"><div class="stat__value">3</div><div class="stat__label">Assigned</div></div>
+  <div class="stat"><div class="stat__value">1</div><div class="stat__label">Due this week</div></div>
+  <div class="stat"><div class="stat__value">2</div><div class="stat__label">Completed</div></div>
+  <div class="stat"><div class="stat__value">60%</div><div class="stat__label">Learning plan done</div></div>
+</div>
+
+<div class="grid-sidebar section">
+  <div>
+    <div class="section__head"><h2>Assessments</h2><a href="#" class="small">View all</a></div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Scenario</th><th>Due</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>The delayed client delivery</td><td>Fri, 30 Oct</td><td><span class="badge badge--ember">Pending</span></td></tr>
+          <tr><td>Two teammates, one deadline</td><td>Mon, 2 Nov</td><td><span class="badge badge--indigo">Insight ready</span></td></tr>
+          <tr><td>A customer escalation</td><td>Completed</td><td><span class="badge badge--teal">Reviewed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel panel--note">
+    <h3>Your next opportunity to grow</h3>
+    <p class="small">Practise communicating delays with a clear update, a revised timeline, and a follow-up commitment.</p>
+    <div class="progress" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="Learning plan progress"><div class="progress__bar" style="width:60%"></div></div>
+  </div>
+</div>
+
+<div class="grid-2 section">
+  <div class="panel">
+    <h2>Controls</h2>
+    <p class="small muted">Buttons, badges and a form field in this workspace's action colour.</p>
+    <p style="display:flex; gap: var(--s2); flex-wrap: wrap">
+      <button class="btn btn--primary" type="button">Save changes</button>
+      <button class="btn btn--secondary" type="button">Cancel</button>
+      <button class="btn btn--quiet" type="button">Skip</button>
+      <button class="btn btn--danger" type="button">Deactivate</button>
+    </p>
+    <p><span class="badge">Draft</span> <span class="badge badge--teal">Published</span> <span class="badge badge--indigo">In review</span> <span class="badge badge--ember">Needs attention</span> <span class="badge badge--danger">Deactivated</span></p>
+    <div class="field"><label for="sg-note">Your concern</label>
+      <textarea class="input" id="sg-note" rows="3" placeholder="Tell us which finding seems inaccurate and why"></textarea>
+      <span class="field__hint">A person on the HR team will read this.</span></div>
+  </div>
+  <div class="empty">
+    <span class="empty__art" aria-hidden="true" style="color: var(--action)">{{ icon("clipboard", 56) }}</span>
+    <h3>No assessments waiting</h3>
+    <p>When a new workplace scenario is assigned to you, it will show up here.</p>
+  </div>
+</div>
+{% endblock %}

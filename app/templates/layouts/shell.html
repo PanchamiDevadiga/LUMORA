@@ -1,0 +1,73 @@
+{#- Signed-in shell. Child layouts (employee/layout.html, hr/layout.html) set `area`. -#}
+{% extends "base.html" %}
+{% from "_macros.html" import icon, logo, flashes %}
+
+{% set area = area|default("employee") %}
+{% set u = preview_user or g.get("user") or current_user %}
+{% set display_name = (u.full_name if u and u.full_name else "Your account") %}
+{% set initials = (display_name.split()|map("first")|join(""))[:2]|upper %}
+
+{% block title %}{{ self.page_title() }} · LUMORA{% endblock %}
+{% block body_class %}shell-page{% endblock %}
+
+{% block body %}
+<div class="shell shell--{{ area }}">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="sidebar__brand">
+      {{ logo(variant="light" if area == "hr" else "dark", href=safe_url(area ~ ".overview", "#")) }}
+    </div>
+
+    <nav class="sidebar__nav">
+      {% for group in nav_for(area) %}
+      <div class="nav-group">
+        {% if group.title %}<p class="nav-group__title">{{ group.title }}</p>{% endif %}
+        <ul class="nav-list">
+          {% for link in group["links"] %}
+          <li>
+            <a class="nav-link" href="{{ link.href }}" {% if link.active %}aria-current="page"{% endif %} data-nav-close>
+              {{ icon(link.icon, 20) }}<span>{{ link.label }}</span>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </nav>
+
+    <div class="sidebar__foot">
+      <div class="usercard">
+        <span class="avatar" aria-hidden="true">{{ initials }}</span>
+        <div style="min-width:0">
+          <div class="usercard__name">{{ display_name }}</div>
+          <div class="usercard__meta">{{ "HR team" if area == "hr" else (u.team if u and u.team else "Employee") }}</div>
+        </div>
+      </div>
+      <form method="post" action="{{ safe_url('auth.logout', '#') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn--quiet signout">{{ icon("logout", 18) }} Sign out</button>
+      </form>
+    </div>
+  </aside>
+  <div class="scrim" data-nav-close></div>
+
+  <div class="shell__main">
+    <header class="topbar">
+      <button type="button" class="btn btn--quiet menu-btn" data-nav-toggle aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation">{{ icon("menu", 22) }}</button>
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <span>{{ "HR workspace" if area == "hr" else "My workspace" }}</span>
+        {{ icon("chevron", 14) }}
+        <strong>{% block page_title %}{% endblock %}</strong>
+      </nav>
+      <span class="topbar__spacer"></span>
+      {% if auth_mode == "demo" %}
+      <span class="badge badge--demo" title="Fictional accounts and sample data. This is not company single sign-on.">Demo mode</span>
+      {% endif %}
+    </header>
+
+    <main id="main" class="content" tabindex="-1">
+      {{ flashes() }}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+# Secrets
+.env
+*.pem
+*.key
+
+# Virtual environments
+venv/
+.venv/
+test_env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs and local files
+*.log
+logs/
+instance/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

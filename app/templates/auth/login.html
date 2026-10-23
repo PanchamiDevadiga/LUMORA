@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, logo, flashes %}
+
+{% block title %}Sign in · LUMORA{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block body %}
+<div class="auth">
+
+  {# Left: the story. Purely decorative art plus a calm statement of principles. #}
+  <section class="auth__story" aria-label="About LUMORA">
+    <svg class="auth__art" viewBox="0 0 450 700" preserveAspectRatio="xMaxYMin meet" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="spark-glow" cx="395" cy="95" r="150" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#E9A23B" stop-opacity="0.38"/>
+          <stop offset="1" stop-color="#E9A23B" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="395" cy="95" r="150" fill="url(#spark-glow)"/>
+      <!-- faint ties between people -->
+      <g stroke="#F8FAFC" stroke-opacity="0.14" stroke-width="1">
+        <line x1="30" y1="610" x2="230" y2="480"/>
+        <line x1="55" y1="470" x2="240" y2="330"/>
+        <line x1="290" y1="570" x2="240" y2="330"/>
+      </g>
+      <!-- growth paths -->
+      <g fill="none" stroke-linecap="round">
+        <path class="draw" d="M30 610 C40 560 40 510 55 470 S125 420 150 400 S215 360 240 330 S300 250 320 200 S375 130 395 95" stroke="#14B8A6" stroke-width="2.5" stroke-opacity="0.85"/>
+        <path d="M150 400 C180 430 210 450 230 480 S270 530 290 570" stroke="#A5B4FC" stroke-width="2" stroke-opacity="0.55"/>
+      </g>
+      <!-- people as nodes -->
+      <g>
+        <circle cx="30" cy="610" r="7" fill="#14B8A6"/>
+        <circle cx="55" cy="470" r="9" fill="#F8FAFC"/>
+        <circle cx="150" cy="400" r="7" fill="#14B8A6"/>
+        <circle cx="240" cy="330" r="10" fill="#F8FAFC"/>
+        <circle cx="320" cy="200" r="7" fill="#14B8A6"/>
+        <circle cx="230" cy="480" r="6" fill="#A5B4FC"/>
+        <circle cx="290" cy="570" r="8" fill="#F8FAFC"/>
+      </g>
+      <!-- the spark -->
+      <path d="M395 70l6 19 19 6-19 6-6 19-6-19-19-6 19-6z" fill="#E9A23B"/>
+    </svg>
+
+    <div>
+      {{ logo(variant="light", size="lg") }}
+      <h1 class="auth__headline">See growth where it's already happening.</h1>
+      <p class="auth__lede">Real workplace scenarios, honest evidence, and a clear next step for every person.</p>
+    </div>
+
+    <div>
+      <p class="auth__tagline">Illuminate Potential. Inspire Growth.</p>
+      <ul class="auth__principles">
+        <li>{{ icon("check", 18) }}<span>Every finding points back to something you actually wrote.</span></li>
+        <li>{{ icon("shield", 18) }}<span>If the evidence isn't enough, LUMORA says so instead of guessing.</span></li>
+        <li>{{ icon("users", 18) }}<span>People make the decisions. LUMORA only offers insight.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  {# Right: the form #}
+  <section class="auth__panel">
+    <main id="main" class="auth__card" tabindex="-1">
+      <h2>Welcome back</h2>
+      <p class="muted">Sign in with your company email to continue.</p>
+
+      {{ flashes() }}
+
+      <form method="post" action="{{ safe_url('auth.login', '') }}" novalidate data-loading>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input class="input" id="email" name="email" type="email" inputmode="email" autocomplete="username"
+                 placeholder="name@company.com" value="{{ email|default('') }}" required autofocus>
+        </div>
+
+        <div class="field" style="margin-bottom: 0">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input class="input" id="password" name="password" type="password" autocomplete="current-password" required>
+            <button type="button" class="btn btn--quiet input-wrap__btn" data-toggle-password="#password"
+                    aria-label="Show password" aria-pressed="false">
+              <span class="icon-on">{{ icon("eye", 20) }}</span><span class="icon-off">{{ icon("eye-off", 20) }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="auth__row">
+          <label class="check"><input type="checkbox" name="remember" value="1"> Keep me signed in on this device</label>
+          <a class="small" href="{{ safe_url('auth.forgot_password', '#') }}">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block" style="--action: var(--navy); --action-hover: var(--navy-soft)">Sign in</button>
+      </form>
+
+      <div class="divider"><span>or</span></div>
+
+      {% if google_enabled %}
+        <a class="btn btn--secondary btn--block" href="{{ safe_url('auth.google_login', '#') }}">Continue with Google</a>
+      {% else %}
+        <button type="button" class="btn btn--secondary btn--block" disabled aria-describedby="google-note">Continue with Google</button>
+        <p class="mode-note" id="google-note">
+          Google sign-in becomes available once your organisation connects its Google Workspace.
+          It isn't active in this build.
+        </p>
+      {% endif %}
+
+      {% if auth_mode == "demo" %}
+        <p class="mode-note panel panel--note" style="padding: var(--s3) var(--s4); margin-top: var(--s5)">
+          <strong>Demo mode.</strong> Sign in with one of the fictional demo accounts listed in the README.
+          This is local sign-in, not Google or company single sign-on.
+        </p>
+      {% else %}
+        <p class="mode-note">Access is limited to authorised, active company accounts.</p>
+      {% endif %}
+    </main>
+  </section>
+</div>
+{% endblock %}
